@@ -119,8 +119,18 @@ export default automation(
 
     slack.sendMessage({
       conversation: parameters.slackChannelId,
-      text: t`${stalled.total} customer escalations have had no Linear update for ${quietDays} days. Showing the first 30:\n${stalled.lines.transform((lines) => lines.join("\n"))}\nAsk the issue owner for a status and update the customer when you have one.`,
+      text: t`${stalled.total} customer escalations have had no Linear update for ${quietDays} days. Showing the first 30:\n${stalled.lines.transform((lines) => lines.join("\n"))}\nAsk the issue owner for a status and update the customer when you have one.`.transform(
+        escapeSlackText,
+      ),
       unfurlLinks: false,
     })
   },
 )
+
+/** Keeps provider text from becoming Slack mentions or control markup. */
+function escapeSlackText(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
